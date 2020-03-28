@@ -1,7 +1,5 @@
-//jshint esversion: 6
-
 const express = require('express');
-const exhandlebars = require('express-handlebars');
+const exphbs = require('express-handlebars');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const passport = require('passport');
@@ -9,18 +7,16 @@ const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const flash = require('connect-flash');
 const bcrypt = require('bcryptjs');
-
-const app = express();
+const formidable = require('formidable');
 // load models
 const Message = require('./models/message.js');
 const User = require('./models/user');
+const app = express();
 //load keys file
 const keys = require('./config/keys.js');
 //load helpers
 const {requireLogin,ensureGuest} = require('./helpers/auth');
-// setup views engine
-app.engine('handlebars', exhandlebars({defaultLayout:'main'}));
-app.set('view engine', 'handlebars');
+const {uploadImage} = require('./helpers/aws');
 // use body parser middleware
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
@@ -47,16 +43,25 @@ app.use(function(req,res,next){
     res.locals.user = req.user || null;
     next();
 });
-//load All strategy
+//load facebook strategy
+// require('./passport/facebook');
+// require('./passport/google');
 require('./passport/local');
 // connect to mlab mongodb
-mongoose.connect(keys.MongoDB, {useNewUrlParser: true, useUnifiedTopology: true}).then(function(){
-    console.log('Server is connected to MongoDB');
+mongoose.connect(keys.MongoDB, {useNewUrlParser:true, useUnifiedTopology: true}).then(function(){
+    console.log('Server is connected to MongoDB');    
 }).catch(function(err){
-    console.log(err);
+    console.log(err);    
 });
 
-app.get('/',ensureGuest, function(req,res){
+// environment variable for port
+// const port = process.env.PORT || 3000;
+// setup view engine
+app.engine('handlebars',exphbs({defaultLayout:'main'}));
+app.set('view engine','handlebars');
+
+
+app.get('/',ensureGuest,function(req,res){
     res.render('home',{
         title:'Home'
     });
@@ -74,6 +79,22 @@ app.get('/contact',ensureGuest,function(req,res){
     });
 });
 
+// app.get('/auth/facebook',passport.authenticate('facebook',{
+//     scope: ['email']
+// }));
+// app.get('/auth/facebook/callback',passport.authenticate('facebook',{
+//     successRedirect: '/profile',
+//     failureRedirect:'/'
+// }));
+
+// app.get('/auth/google',passport.authenticate('google',{
+//     scope: ['profile']
+// }));
+// app.get('/auth/google/callback',passport.authenticate('google',{
+//     successRedirect: '/profile',
+//     failureRedirect: '/'
+// }));
+
 app.get('/profile',requireLogin,function(req,res){
     User.findById({_id:req.user._id}).then(function(user){
         if (user){
@@ -83,11 +104,11 @@ app.get('/profile',requireLogin,function(req,res){
                     throw err;
                 } else{
                     res.render('profile',{
-                        title: 'Profile',
+                        title: 'profile',
                         user:user
                     });
                 }
-            });
+            })
         }
     });
 });
@@ -99,9 +120,9 @@ app.get('/newAccount', function(req,res){
 });
 
 app.post('/signup',function(req,res){
-    console.log(req.body);
+    console.log(req.body); 
     let errors = [];
-
+    
     if (req.body.password !== req.body.password2){
         errors.push({text: 'Password does Not match'});
     }
@@ -116,8 +137,7 @@ app.post('/signup',function(req,res){
             email: req.body.email,
             password: req.body.password,
             password2: req.body.password2
-        }
-      );
+        });
     }else{
         User.findOne({email:req.body.email})
         .then(function(user){
@@ -134,21 +154,31 @@ app.post('/signup',function(req,res){
                 const newUser = {
                     fullname: req.body.username,
                     email: req.body.email,
+                    birthDate: req.body.birthDate,
+                    address: req.body.address,
+                    gender: req.body.gender,
+                    occupation: req.body.occupation,
+                    parentsAddress: req.body.parentsAddress,
+                    city: req.body.city,
+                    country: req.body.country,
+                    parentsFullname: req.body.parentsFullname,
+                    phoneNumber: req.body.phoneNumber,
+                    // studentAmage:req.body.studentAmage,
                     password: hash
                 }
-                // console.log(newUser);
+                // console.log(newUser);  
                 new User(newUser).save(function(err, user){
                     if (err){
                         throw err;
                     }
                     if (user){
                         let success = [];
-                        success.push({text: 'You have successfully created an account, you can '});
+                        success.push({text: 'You have successfully created an account, you can login now'});
                         res.render('home',{
                             success: success
                         });
                     }
-                });
+                })             
             }
         });
     }
@@ -167,6 +197,40 @@ app.get('/loginErrors',function(req,res){
         errors:errors
     });
 });
+// handle get route
+app.get('/uploadImage',function(req,res){
+    res.render('uploadImage',{
+      title: 'Upload'
+    });
+  });
+  app.post('/uploadAvatar', function(req,res){
+    User.findById({_id:req.user._id})
+    .then(function(user){
+    //   user.image = req.body.upload;
+      user.image = `https://galaxyportalbucket.s3.eu-central-1.amazonaws.com/${req.body.upload}`;
+      user.save(function(err){
+        if (err) {
+          throw err;
+        }
+        else{
+          res.redirect('/profile');
+        }
+      });
+    });
+  });
+  app.post('/uploadFile',uploadImage.any(),function(req,res){
+    const form = new formidable.IncomingForm();
+    form.on('file',function(field,file){
+        console.log(file);
+    });
+    form.on('error', function(err){
+        console.log(err);
+    });
+    form.on('end',function(){
+        console.log('Image upload is successfull ..');
+    });
+    form.parse(req);
+  });
 
 app.get('/logout', function(req,res){
     User.findById({_id:req.user._id})
@@ -180,10 +244,10 @@ app.get('/logout', function(req,res){
                 req.logout();
                 res.redirect('/');
             }
-        });
-    });
-
-});
+        })
+    })
+   
+})
 
 app.post('/contactUs',function(req,res){
     console.log(req.body);
@@ -194,20 +258,33 @@ app.post('/contactUs',function(req,res){
         message: req.body.message,
         date: new Date()
     }
+    
 
     new Message(newMessage).save(function(err, message){
         if (err){
             throw err;
         }else{
-          res.render('newMessage',{
-              title: 'Sent'
-          });
-
+            Message.find({})
+            .then(function(messages){
+                if(messages){                    
+                    res.render('newmessage',{
+                        title: 'Sent',
+                        messages:messages
+                    });
+                }else{
+                    res.render('noMessage',{
+                        title: 'Not found'
+                    });
+                }
+            });
         }
-
+        
     });
-
+    
 });
+
+
+
 
 app.listen(process.env.PORT || 3000, function() {
     console.log('Server is running on Port 3000');

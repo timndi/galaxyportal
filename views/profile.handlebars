@@ -1,16 +1,50 @@
+<div class="row" style=" margin: 3%; margin-top: 23%;">
+  <div class="col-md-3">
+<img class="bargeimage" src="images/galaxybarge.jpg" alt="">
+  </div>
+  <div class="col-md-8">
+<h3 >Galaxy Gem Student's Portal</h3>
 
+  </div>
+</div>
 <div class="row">
-  <div class="col-sm">
-    <div class="card" style="width: 18rem;">
-      <img src="{{user.image}}" class="card-img-top" alt="...">
-      <div class="card-body">
-    </div>
+  <div style="margin-bottom: 6%;" class="col-sm-5">
+        <div class="card" style="width: 18rem;">
+          <a href="/uploadImage">
+          <img src="{{user.image}}" class="card-img-top" alt="..." >
+          </a>      
+          <div class="card-body"> </div>
+        </div>
+        
   </div>
-  </div>
+
 
    <div class="col-sm">
      <h5 class="card-title">Student's Fullname: {{user.fullname}}</h5>
      <p class="card-text">Email: {{user.email}}<p>
-     <p class="card-text">City: {{user.city}}<p>
+     <p class="card-text">Date of Birth: {{user.birthDate}}</p>
+      <p class="card-text">Gender: {{user.gender}}<p></p>
+      <p class="card-text">Address: {{user.address}}<p>
+      <p class="card-text">Country Of Origin: {{user.country}}<p></p>
    </div>
 </div>
+
+
+
+{{!-- <div class="row" style="margin-top: 5%; margin-bottom: 35%;">
+  <div class="col-sm-5">
+        <div class="card" style="width: 18rem;">
+          {{!-- <img src="{{user.image2}}" class="card-img-top" alt="...">       --}}
+          <div class="card-body"> </div>
+        </div>
+        <p>Parents image</p>
+  </div>
+
+   <div class="col-sm">
+     <h5 class="card-title">Parents Fullname: {{user.parentsFullname}}</h5>
+     <p class="card-text">Phone Number: {{user.phoneNumber}}<p>
+      <p class="card-text">Parent's Occupation: {{user.occupation}}<p>
+      <p class="card-text">Parent's Address: {{user.parentsAddress}}<p></p>
+   </div>
+</div>
+ --}}

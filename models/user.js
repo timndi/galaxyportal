@@ -1,4 +1,3 @@
-//jshint esversion:6
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
@@ -21,6 +20,32 @@ const userSchema = new Schema({
     image:{
         type: String,
         default: '/images/user-logo.jpg'
+    },
+    image2:{
+        type: String,
+        default: '/images/user-logo.jpg'
+    },
+
+    parentsFullname:{
+        type: String
+    },
+    occupation:{
+        type: String
+    },
+    parentsAddress:{
+        type: String
+    },
+    phoneNumber: {
+         type: String
+    },
+    birthDate:{
+        type: String
+    },
+    gender:{
+        type: String
+    },
+    address:{
+        type: String
     },
     email:{
         type: String

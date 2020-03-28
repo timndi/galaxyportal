@@ -1,14 +1,21 @@
-<h1>Welcome to GALAXY GEM SCHOOL Portal</h1>
+<h3 style="padding-top: 20%;">GALAXY GEM STUDENT PORTAL</h3>
 {{#if user}}
 <p>You are logged in..</p>
 {{else}}
-
-<div class="row">
+<div class="row" style="padding-bottom: 15%;">
     <div class="col-sm-4">
+        <h1 class="center">
+        <a href="/auth/facebook"><button type="button" class="btn btn-primary btn-lg">Login With Facebook</button></a>
+        </h1>
+
+        <h1 class="center">
+            <a href="/auth/google"><button type="button" class="btn btn-danger btn-lg">Login With Google</button></a>
+        </h1 class="center">
+        <p class="center">or</p>
 
         <form action="/login" method="POST">
         {{#each success}}
-        <p class="green">{{text}}<a href="#">Login now</a></p>
+        <p class="green">{{text}}</p>
         {{/each}}
         {{#each errors}}
         <p class="red">{{text}}</p>

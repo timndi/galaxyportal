@@ -1,4 +1,3 @@
-//jshint esversion:6
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const User = require('../models/user');
@@ -25,7 +24,7 @@ passport.use(new LocalStrategy({
         }
         bcrypt.compare(password,user.password,function(err,isMatch){
             if(err){
-                return done(err);
+                throw err;
             }
             if(isMatch){
               return done(null,user);
@@ -33,9 +32,9 @@ passport.use(new LocalStrategy({
             else{
                 return done(null,false);
             }
-        });
+        })
     }).catch(function(err){
         console.log(err);
-
+        
     });
 }));
