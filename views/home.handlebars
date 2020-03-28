@@ -4,14 +4,14 @@
 {{else}}
 <div class="row" style="padding-bottom: 15%;">
     <div class="col-sm-4">
-        <h1 class="center">
+        {{!-- <h1 class="center">
         <a href="/auth/facebook"><button type="button" class="btn btn-primary btn-lg">Login With Facebook</button></a>
         </h1>
 
         <h1 class="center">
             <a href="/auth/google"><button type="button" class="btn btn-danger btn-lg">Login With Google</button></a>
         </h1 class="center">
-        <p class="center">or</p>
+        <p class="center">or</p> --}}
 
         <form action="/login" method="POST">
         {{#each success}}
