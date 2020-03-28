@@ -1,0 +1,27 @@
+/* h1{
+    text-align: center;
+} */
+
+.center{
+    text-align: center;
+}
+
+.create-newAccount-button{
+    background-color: green;
+    padding: 5px;
+    color: #fff;
+    border-radius: 5px;
+    margin-top: 50px;
+}
+.create-newAccount-button:hover{
+    color: greenyellow;
+    text-decoration: none;
+}
+
+.green{
+    color: green;
+}
+
+.red{
+    color: red;
+}

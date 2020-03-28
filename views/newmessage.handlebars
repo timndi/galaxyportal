@@ -1,0 +1,11 @@
+<h1>Thank you for contacting</h1>
+{{#each messages}}
+<p>{{fullname}}</p>
+<p>{{email}}</p>
+<p>{{message}}</p>
+<small>{{date}}</small>
+<hr>
+{{else}}
+<p>No messages</p>
+{{/each}}
+<a href="/"><button class="btn btn-success">Back To Home Page</button></a>

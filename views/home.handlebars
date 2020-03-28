@@ -1,1 +1,30 @@
 <h1>Welcome to GALAXY GEM SCHOOL Portal</h1>
+{{#if user}}
+<p>You are logged in..</p>
+{{else}}
+
+<div class="row">
+    <div class="col-sm-4">
+
+        <form action="/login" method="POST">
+        {{#each success}}
+        <p class="green">{{text}}<a href="#">Login now</a></p>
+        {{/each}}
+        {{#each errors}}
+        <p class="red">{{text}}</p>
+        {{/each}}
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="text" name="email" id="email" class="form-control" placeholder="Enter email address">
+        </div>
+        <div class="form-group">
+            <label for="password">Passsword</label>
+            <input type="password" name="password" id="password" class="form-control" placeholder="Enter password">
+        </div>
+        <button type="submit" class="btn btn-lg btn-primary">Login</button>
+        </form> <br>
+        <a href="/newAccount" class="create-newAccount-button">Create New Account</a>
+    </div>
+</div>
+
+{{/if}}
